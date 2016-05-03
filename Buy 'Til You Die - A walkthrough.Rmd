@@ -1,0 +1,41 @@
+---
+title: "Buy_till_you_die Customer Lifetime Value"
+author: "Angad Gadre"
+date: "May 3, 2016"
+output: html_document
+---
+
+1. In order to Import data to run this script, export from db. The Export is a csv file with the following specifics:
+
+* Fields:
+    + Customer Number
+    + First Transaction (LT1 Occ Date)
+    + Transaction date
+    + POS Transaction no
+    + Store No
+    + Sum(Item Amount Central)
+    
+* Customer Scope:
+    + First Transaction (LT1 Occ Date) 10/01/2012 to onwards
+    + First Transaction (LT1 Occ Store) in 1:1999 for Retail Newbies
+    + First Transaction (LT1 Occ Store) in (6101) for vs.com Newbies
+
+* Transaction scope:
+    + Start fiscal first quarter 2015 to date 
+    
+    + _Note: For reference, Export ID: 17210_ 
+    
+2. Importing raw data into R data frame and check data for oddities.
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(plyr);library(dplyr)
+library(scales)
+library(grid)
+
+set.seed(666)
+
+install.packages("BTYD", dependencies = T)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
