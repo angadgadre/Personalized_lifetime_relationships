@@ -16,9 +16,9 @@ output: html_document
     + Sum(Item Amount Central)
     
 * Customer Scope:
-    + First Transaction (LT1 Occ Date) 10/01/2012 to onwards
-    + First Transaction (LT1 Occ Store) in 1:1999 for Retail Newbies
-    + First Transaction (LT1 Occ Store) in (6101) for vs.com Newbies
+    + First Transaction (LT1 Occ Date) 10/01/2012 onwards
+    + First Transaction (LT1 Occ Store) in 1:1999 R newbies
+    + First Transaction (LT1 Occ Store) in (6101) W newbies
 
 * Transaction scope:
     + Start fiscal first quarter 2015 to date 
@@ -36,6 +36,10 @@ library(grid)
 set.seed(666)
 
 install.packages("BTYD", dependencies = T)
+
+library(BTYD)
+
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
