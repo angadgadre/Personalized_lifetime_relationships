@@ -39,6 +39,15 @@ install.packages("BTYD", dependencies = T)
 
 library(BTYD)
 
+## Utilizing the more efficient dc.Readlines function to tune data read from supported event log or transaction data file
+
+cdnow_eventLog = system.file("data/cdnowElog.csv", package = "BTYD")
+
+trans_data = dc.ReadLines(cdnow_eventLog, cust.idx = 2, date.idx = 3, sales.idx = 5)
+
+head(trans_data)
+
+# Converting dates from character to datetime format
 
 ```
 
