@@ -49,6 +49,55 @@ head(trans_data)
 
 # Converting dates from character to datetime format
 
+trans_data$date = as.Date(trans_data$date, "%Y%m%d")
+
+# Pareto/BRD models concerned with inter-purchase time, so need to merge all transaction that had been on the same day
+
+elog = dc.MergeTransactionsOnSameDate(trans_data)
+
+# Splitting dataset into training and testing periods
+end.of.cal.period = as.Date("1997-09-30")
+elog.train = elog[which(elog$date <= end.of.cal.period),]
+
+## IMP - design step
+# We are only concerned with repeat transactions (ignoring the first transaction)
+
+# Later we will join the first trans date info to get the recency indicator
+
+split.data = dc.SplitUpElogForRepeatTrans(elog.train)
+clean.elog.train = split.data$repeat.trans.elog
+
+# Now creating the adjacency matrix for each customer per day
+
+freq.cbt = dc.CreateFreqCBT(clean.elog.train)
+head(freq.cbt)
+
+## Merging back the large swath of one-and-donners
+total.cbt = dc.CreateFreqCBT(elog)
+train.cbt = dc.MergeCustomers(total.cbt, freq.cbt)
+
+total.cbt[1:3,1:3]
+train.cbt[1:3,1:3]
+
+birth.periods = split.data$cust.data$birth.per
+birth.periods[1:10]
+
+last.dates = split.data$cust.data$last.date
+last.dates[1:10]
+
+train.cbs.dates = data.frame(birth.periods, last.dates, end.of.cal.period)
+tail(train.cbs.dates)
+
+train.cbs = dc.BuildCBSFromCBTAndDates(train.cbt, train.cbs.dates, per = "week")
+
+tail(train.cbs)
+
+# Interpreting the indicators in the final modelling dataset 'train.cbs'
+# x: seems like # of Repeat purchases (ie. total purchases minus 1)
+# t.x: seems like the days between last 2 purchases (zero for   one-and-donners)
+# T.cal: seems like total days alive from the time of birth (since we assume that the user is still active at the end of the training period, in order to calculate P(alive | D)) 
+
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
