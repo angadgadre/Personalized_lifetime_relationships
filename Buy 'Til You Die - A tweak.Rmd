@@ -1,0 +1,78 @@
+---
+title: "Buy 'Til You Die - A tweak"
+author: "Angad Gadre"
+date: "May 12, 2016"
+output: html_document
+---
+
+1. In order to Import data to run this script, export from db. The Export is a csv file with the following specifics:
+
+* Fields:
+    + Customer Number
+    + First Transaction (LT1 Occ Date)
+    + Transaction date
+    + POS Transaction no
+    + Store No
+    + Sum(Item Amount Central)
+
+* Customer Scope:
+    + First Transaction (LT1 Occ Date) 10/01/2012 onwards
+    + First Transaction (LT1 Occ Store) in 1:1999 R newbies
+    + First Transaction (LT1 Occ Store) in (6101) W newbies
+
+* Transaction scope:
+    + Start fiscal first quarter 2015 to date
+    + Note: For reference, Export ID: 17210
+
+2. Importing raw data into R data frame and check data for oddities.
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(plyr);library(dplyr)
+library(scales)
+library(grid)
+
+set.seed(666)
+
+install.packages("BTYD", dependencies = T)
+
+library(BTYD)
+
+## Utilizing the more efficient dc.Readlines function to tune data read from supported event log or transaction data file
+
+cdnow_eventLog = system.file("data/cdnowElog.csv", package = "BTYD")
+
+## Location of event log file - C:\Program Files\R\R-3.2.0\library\BTYD\data
+
+trans_data = dc.ReadLines(cdnow_eventLog, cust.idx = 2, date.idx = 3, sales.idx = 5)
+
+head(cdnow_eventLog)
+
+trans_data = as.Date(trans_data$date, "%Y%m%d")
+
+
+```
+
+The process for this walkthrough would be to simulatneously work on our real (yet sampled) data while working on the BYTD package event-log data.
+
+There are two benefits to this - keeping us in line with the steps taken for reproducibilty reflected from the paper, allowing to highlight the assumptions we have taken, and eventually introduce tweaks to reflect our particular problem domain.
+
+Cool? Great.
+
+```{r, echo= FALSE}
+# Thinking about sample size. n >= (z* (sigma)/MOE)^2  --for estimating sample proportions
+
+# For estimating sample mean -- n >= (t * sigma/MOE)^2, as n >= 30 t -> z*
+
+# where n: Sample size, z*: z-value corresponding to the confidence level we need, sigma: sample std dev or estimated population std dev, MOE: Margin of error (the sample statistic we are going to measure from the sampling defines what the MOE we want to employ. For example--)
+
+dir = "H:/Analysis/Scripts/research/Raw Data/"
+file_vscom = "transDatavscomAcqCust.csv"
+
+vscomEventLog = read.csv(file = paste0(dir, file_vscom), header = FALSE, col.names = c("Customer_no", "First_trans_date", "Transaction_date", "Sum_trans_amount_central"), colClasses = c("factor", "factor", "factor", "numeric"), na.strings = c(" ", "NA"))
+
+summary(vscomEventLog)
+
+
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
